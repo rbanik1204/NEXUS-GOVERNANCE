@@ -1,0 +1,290 @@
+type Proposal @entity {
+  id: ID!
+  proposalId: BigInt!
+  proposer: Citizen!
+  title: String!
+  description: String!
+  proposalType: ProposalType!
+  status: ProposalStatus!
+  createdAt: BigInt!
+  startTime: BigInt!
+  endTime: BigInt!
+  executedAt: BigInt
+  canceledAt: BigInt
+  votes: [Vote!]! @derivedFrom(field: "proposal")
+  forVotes: BigInt!
+  againstVotes: BigInt!
+  abstainVotes: BigInt!
+  totalVotes: BigInt!
+  quorumReached: Boolean!
+  passed: Boolean
+  transactionHash: Bytes!
+  blockNumber: BigInt!
+}
+
+type Vote @entity {
+  id: ID!
+  voter: Citizen!
+  proposal: Proposal!
+  support: VoteType!
+  weight: BigInt!
+  reason: String
+  timestamp: BigInt!
+  transactionHash: Bytes!
+  blockNumber: BigInt!
+  delegated: Boolean!
+}
+
+type Citizen @entity {
+  id: ID!
+  address: Bytes!
+  registeredAt: BigInt!
+  status: CitizenStatus!
+  votingPower: BigInt!
+  delegatedPower: BigInt!
+  delegatedTo: Citizen
+  proposalsCreated: [Proposal!]! @derivedFrom(field: "proposer")
+  votes: [Vote!]! @derivedFrom(field: "voter")
+  identityHash: Bytes
+  identityVerified: Boolean!
+  verifiedAt: BigInt
+  verifier: Bytes
+  totalProposals: Int!
+  totalVotes: Int!
+  participationRate: BigDecimal!
+}
+
+type TreasuryTransaction @entity {
+  id: ID!
+  transactionHash: Bytes!
+  type: TxType!
+  token: Bytes!
+  tokenSymbol: String!
+  amount: BigInt!
+  from: Bytes!
+  to: Bytes!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  budget: Budget
+  proposal: Proposal
+  description: String
+}
+
+type Budget @entity {
+  id: ID!
+  budgetId: BigInt!
+  category: String!
+  amount: BigInt!
+  spent: BigInt!
+  remaining: BigInt!
+  token: Bytes!
+  createdAt: BigInt!
+  approvedAt: BigInt
+  approvers: [Bytes!]!
+  transactions: [TreasuryTransaction!]! @derivedFrom(field: "budget")
+  status: BudgetStatus!
+}
+
+type GovernanceParameter @entity {
+  id: ID!
+  name: String!
+  value: BigInt!
+  previousValue: BigInt
+  updatedAt: BigInt!
+  updatedBy: Bytes!
+  proposal: Proposal
+  history: [ParameterChange!]! @derivedFrom(field: "parameter")
+}
+
+type ParameterChange @entity {
+  id: ID!
+  parameter: GovernanceParameter!
+  oldValue: BigInt!
+  newValue: BigInt!
+  timestamp: BigInt!
+  changedBy: Bytes!
+  proposal: Proposal
+  transactionHash: Bytes!
+}
+
+type ComplianceViolation @entity {
+  id: ID!
+  violationId: BigInt!
+  violator: Citizen!
+  rule: ComplianceRule!
+  severity: Severity!
+  description: String!
+  reportedAt: BigInt!
+  reportedBy: Bytes!
+  resolved: Boolean!
+  resolvedAt: BigInt
+  resolvedBy: Bytes
+  resolution: String
+}
+
+type ComplianceRule @entity {
+  id: ID!
+  ruleId: BigInt!
+  ruleType: RuleType!
+  description: String!
+  active: Boolean!
+  createdAt: BigInt!
+  violations: [ComplianceViolation!]! @derivedFrom(field: "rule")
+  violationCount: Int!
+}
+
+type LegalDocument @entity {
+  id: ID!
+  documentId: BigInt!
+  docType: DocumentType!
+  title: String!
+  contentHash: Bytes!
+  status: DocumentStatus!
+  author: Bytes!
+  createdAt: BigInt!
+  approvedAt: BigInt
+  approver: Bytes
+  activatedAt: BigInt
+  supersededBy: LegalDocument
+  supersedes: LegalDocument
+  jurisdiction: String
+  proposal: Proposal
+}
+
+type AuditRecord @entity {
+  id: ID!
+  recordId: BigInt!
+  subject: Bytes!
+  action: String!
+  details: String
+  timestamp: BigInt!
+  recordedBy: Bytes!
+  category: AuditCategory!
+  relatedProposal: Proposal
+  relatedTransaction: TreasuryTransaction
+}
+
+type DailyStats @entity {
+  id: ID!
+  date: String!
+  timestamp: BigInt!
+  proposalsCreated: Int!
+  votesCast: Int!
+  uniqueVoters: Int!
+  treasuryDeposits: BigInt!
+  treasuryWithdrawals: BigInt!
+  newCitizens: Int!
+  activeCitizens: Int!
+  quorumAverage: BigDecimal!
+}
+
+type MonthlyStats @entity {
+  id: ID!
+  month: String!
+  year: Int!
+  monthNumber: Int!
+  proposalsCreated: Int!
+  proposalsPassed: Int!
+  proposalsFailed: Int!
+  successRate: BigDecimal!
+  totalVotes: Int!
+  uniqueVoters: Int!
+  participationRate: BigDecimal!
+  treasuryGrowth: BigInt!
+  newCitizens: Int!
+  activeCitizens: Int!
+}
+
+enum ProposalType {
+  GENERAL
+  TREASURY
+  PARAMETER
+  UPGRADE
+  EMERGENCY
+  REGULATION
+  POLICY
+  AMENDMENT
+}
+
+enum ProposalStatus {
+  PENDING
+  ACTIVE
+  CANCELED
+  DEFEATED
+  SUCCEEDED
+  QUEUED
+  EXPIRED
+  EXECUTED
+}
+
+enum VoteType {
+  FOR
+  AGAINST
+  ABSTAIN
+}
+
+enum CitizenStatus {
+  NONE
+  PENDING
+  ACTIVE
+  SUSPENDED
+  REVOKED
+}
+
+enum TxType {
+  DEPOSIT
+  WITHDRAWAL
+}
+
+enum BudgetStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  CANCELED
+}
+
+enum Severity {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+enum RuleType {
+  IDENTITY_VERIFICATION
+  VOTING_ELIGIBILITY
+  PROPOSAL_REQUIREMENTS
+  SPENDING_LIMITS
+  QUORUM_REQUIREMENTS
+  CONFLICT_OF_INTEREST
+  DATA_RETENTION
+  REPORTING_REQUIREMENT
+}
+
+enum DocumentType {
+  CONSTITUTION
+  POLICY
+  REGULATION
+  AMENDMENT
+  PROCEDURE
+  COMPLIANCE_RULE
+  LEGAL_OPINION
+  AUDIT_REPORT
+}
+
+enum DocumentStatus {
+  DRAFT
+  PROPOSED
+  APPROVED
+  ACTIVE
+  SUPERSEDED
+  REVOKED
+}
+
+enum AuditCategory {
+  GOVERNANCE
+  TREASURY
+  COMPLIANCE
+  IDENTITY
+  SYSTEM
+}

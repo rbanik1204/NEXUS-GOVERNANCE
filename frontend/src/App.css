@@ -1,0 +1,26 @@
+/* App Container */
+.App {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Container */
+.container {
+  max-width: 1400px;
+}
+
+/* Smooth Scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection */
+::selection {
+  background: hsl(var(--primary) / 0.3);
+  color: hsl(var(--foreground));
+}
+
+::-moz-selection {
+  background: hsl(var(--primary) / 0.3);
+  color: hsl(var(--foreground));
+}

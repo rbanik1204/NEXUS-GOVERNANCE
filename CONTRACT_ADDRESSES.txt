@@ -1,0 +1,47 @@
+# Contract Addresses - Government-Grade DAO Platform
+
+## Deployment Information
+Network: Sepolia Testnet
+Chain ID: 11155111
+Deployed: 2026-01-17
+Deployer: 0x400aCbC3D1Cc3F7BfA086CC3B0fAA916C3BD5194
+
+## Smart Contract Addresses
+
+### GovernanceCore
+Address: 0xd9145CCE52D386f254917e481eB44e9943F39138
+Etherscan: https://sepolia.etherscan.io/address/0xd9145CCE52D386f254917e481eB44e9943F39138
+
+### ProposalManager
+Address: 0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8
+Etherscan: https://sepolia.etherscan.io/address/0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8
+
+### ExecutionModule
+Address: 0xf8e81D47203A594245E36C48e151709F0C19fBe8
+Etherscan: https://sepolia.etherscan.io/address/0xf8e81D47203A594245E36C48e151709F0C19fBe8
+
+## For Backend (.env)
+```
+RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
+GOVERNANCE_CORE_ADDRESS=0xd9145CCE52D386f254917e481eB44e9943F39138
+PROPOSAL_MANAGER_ADDRESS=0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8
+EXECUTION_MODULE_ADDRESS=0xf8e81D47203A594245E36C48e151709F0C19fBe8
+```
+
+## For Frontend (.env.production)
+```
+REACT_APP_GOVERNANCE_CONTRACT=0xd9145CCE52D386f254917e481eB44e9943F39138
+REACT_APP_PROPOSAL_CONTRACT=0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8
+REACT_APP_CHAIN_ID=11155111
+REACT_APP_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
+```
+
+## Deployer Address
+0x400aCbC3D1Cc3F7BfA086CC3B0fAA916C3BD5194
+
+## Notes
+- All contracts deployed with Solidity 0.8.31
+- Governance parameters: [50400, 172800, 1000, "100000000000000000000"]
+- Proposal cooldown: 604800 seconds (7 days)
+- Execution delays: min=86400 (24h), max=2592000 (30 days)
+- Deployment successful on Sepolia testnet
